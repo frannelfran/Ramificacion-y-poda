@@ -30,3 +30,7 @@
 *.exe
 *.out
 *.app
+*programa
+
+# Debug files
+*vscode
