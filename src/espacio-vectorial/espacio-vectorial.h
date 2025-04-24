@@ -15,8 +15,10 @@ class EspacioVectorial {
     // Métodos de la clase
     inline void agregarPunto(const Punto& punto) { espacioVectorial_.push_back(punto); }
 
+    // Getters
+    inline int getDimension() const { return espacioVectorial_.size(); }
+
   private:
-    int dimension_; // Dimensión del espacio vectorial
     vector<Punto> espacioVectorial_; // Vector de puntos en el espacio vectorial
 };
 

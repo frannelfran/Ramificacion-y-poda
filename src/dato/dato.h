@@ -8,9 +8,7 @@
 #include "../espacio-vectorial/espacio-vectorial.h"
 
 struct Dato {
-  // Valores para definir el número de puntos y el tamaño del espacio vectorial
-  int numPuntos;
-  int dimension;
+  string nombreFichero; // Nombre del fichero
 
   // Espacio vectorial
   EspacioVectorial espacioVectorial;

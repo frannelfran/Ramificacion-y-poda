@@ -7,25 +7,35 @@
  */
 vector<Dato> leerFicheros(const string& directorio) {
   vector<Dato> datos;
-
-  // Recorro los ficheros del directorio
   for (const auto& entrada : fs::directory_iterator(directorio)) {
     // Verifico que la entrada es un fichero
     if (fs::is_regular_file(entrada)) {
       Dato dato;
-      int numPuntos, dimension;
+      int numPuntos, tamanio;
       string nombreFichero = entrada.path().filename().string();
-      ifstream fichero(nombreFichero); // Abro el fichero
+      ifstream fichero(entrada.path().string()); // Abro el fichero con la ruta completa
 
-      fichero >> numPuntos >> dimension;
+      dato.nombreFichero = nombreFichero;
+
+      fichero >> numPuntos >> tamanio;
+      if (tamanio <= 0) {
+        throw invalid_argument("La dimensión debe ser mayor que cero");
+      }
+      if (numPuntos <= 0) {
+        throw invalid_argument("El número de puntos debe ser mayor que cero");
+      }
+    
       for (int i = 0; i < numPuntos; i++) {
-        vector<double> punto(dimension);
-        for (int j = 0; j < dimension; j++) {
+        vector<double> punto(tamanio);
+        for (int j = 0; j < tamanio; j++) {
           fichero >> punto[j];
         }
         dato.espacioVectorial.agregarPunto(Punto(punto));
       }
+      datos.push_back(dato);
+      fichero.close();
     }
+    
   }
   return datos;
 }
