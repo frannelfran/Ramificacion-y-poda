@@ -49,3 +49,36 @@ void Voraz::ejecutar() {
   // Agrego el resultado al vector de resultados
   resultados_.push_back(resultado);
 }
+
+/**
+ * @brief Método para mostrar los resultados del algoritmo Voraz
+ * @return void
+ */
+void Voraz::mostrarResultados() {
+  static bool cabeceraMostrada = false;
+
+  if (!cabeceraMostrada) {
+    // Cabecera
+    cout << "---------------------------------------------" << endl;
+    cout << left 
+    << setw(20) << "Problema" 
+    << setw(6) << "n" 
+    << setw(6) << "K" 
+    << setw(6) << "m" 
+    << setw(12) << "Tiempo CPU" 
+    << endl;
+    cout << "---------------------------------------------" << endl;
+    cabeceraMostrada = true;
+  }
+
+  // Muestro los resultados
+  for (const auto& resultado : resultados_) {
+    cout << left 
+    << setw(20) << resultado.nombreFichero
+    << setw(6) << resultado.numPuntos
+    << setw(6) << resultado.tamanio
+    << setw(6) << resultado.espacioVectorial.getDimension()
+    << endl;
+  }
+  cout << "---------------------------------------------" << endl;
+}

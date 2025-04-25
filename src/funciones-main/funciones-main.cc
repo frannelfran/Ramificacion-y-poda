@@ -1,6 +1,19 @@
 #include "funciones-main.h"
 
 /**
+ * @brief Función para ordenar los datos
+ * @param datos Vector de estructuras Dato con los datos a ordenar
+ * @details Datos ordenados por el nombre del fichero
+ * @return vector<Dato> Vector de estructuras Dato ordenado
+ */
+vector<Dato> ordenarDatos(vector<Dato>& datos) {
+  sort(datos.begin(), datos.end(), [](const Dato& a, const Dato& b) {
+    return a.nombreFichero < b.nombreFichero;
+  });
+  return datos;
+}
+
+/**
  * @brief Función para leer los ficheros de datos
  * @param directorio Directorio donde se encuentran los ficheros
  * @return vector<Dato> Vector de estructuras Dato con los datos leídos
@@ -39,7 +52,7 @@ vector<Dato> leerFicheros(const string& directorio) {
       fichero.close();
     }
   }
-  return datos;
+  return ordenarDatos(datos);
 }
 
 /**

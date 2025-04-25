@@ -13,7 +13,9 @@
 
 namespace fs = filesystem;
 
+// Funciones para gestionar los ficheros
 vector<Dato> leerFicheros(const string& directorio);
+vector<Dato> ordenarDatos(vector<Dato>& datos);
 // Funciones para ejecutar los algoritmos
 void ejecutarVoraz(vector<Dato>& datos, int numPuntosAlejados);
 void ejecutarAlgoritmo(vector<Dato>& datos, const int opcion);

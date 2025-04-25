@@ -14,7 +14,7 @@ class Voraz : public Algoritmo {
 
     // Métodos de la clase
     void ejecutar() override;
-    void mostrarResultados() override {}
+    void mostrarResultados() override;
 
     // Setters
     inline void setNumPuntosAlejados(const int numPuntosAlejados) { numPuntosAlejados_ = numPuntosAlejados; }

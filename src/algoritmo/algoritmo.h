@@ -6,6 +6,7 @@
 #define C_Algoritmo_H
 
 #include "../dato/dato.h"
+#include <iomanip>
 
 class Algoritmo {
   public:
