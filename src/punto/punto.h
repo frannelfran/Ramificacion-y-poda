@@ -7,6 +7,7 @@
 
 #include <iostream>
 #include <vector>
+#include <cmath> // Para calcular la distancia
 
 using namespace std;
 
@@ -15,6 +16,9 @@ class Punto {
     // Constructor
     Punto() {}
     Punto(const vector<double>& punto) : punto_(punto) {}
+
+    // Métodos de la clase
+    double calcularDistancia(const Punto& otro) const;
 
     // Getters
     inline int getDimension() const { return punto_.size(); }
