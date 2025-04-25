@@ -17,3 +17,17 @@ Punto EspacioVectorial::calcularCentroGravedad() const {
   }
   return Punto(centroGravedad);
 }
+
+/**
+ * @brief Método para eliminar un punto del espacio vectorial
+ * @param punto Punto a eliminar
+ * @return void
+ */
+void EspacioVectorial::eliminarPunto(const Punto& punto) {
+  auto it = find(espacioVectorial_.begin(), espacioVectorial_.end(), punto);
+  if (it != espacioVectorial_.end()) {
+    espacioVectorial_.erase(it);
+  } else {
+    throw invalid_argument("El punto no se encuentra en el espacio vectorial");
+  }
+}
