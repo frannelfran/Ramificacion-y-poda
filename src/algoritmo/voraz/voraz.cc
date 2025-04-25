@@ -2,21 +2,22 @@
 
 /**
  * @brief Método para calcular el punto más alejado del centro de gravedad
+ * @param espacio Espacio vectorial
  * @param centroGravedad Centro de gravedad
  * @return Punto más alejado del centro de gravedad
  */
-Punto& Voraz::puntoMasAlejado(const Punto& centroGravedad) const {
+Punto* Voraz::puntoMasAlejado(EspacioVectorial& espacio, const Punto& centroGravedad) const {
   double maxDistancia = -1;
   Punto* puntoMasAlejado = nullptr;
 
-  for (size_t i = 0; i < dato_->espacioVectorial.getDimension(); ++i) {
-    double distancia = dato_->espacioVectorial[i].calcularDistancia(centroGravedad);
+  for (size_t i = 0; i < espacio.getDimension(); ++i) {
+    double distancia = espacio[i].calcularDistancia(centroGravedad);
     if (distancia > maxDistancia) {
       maxDistancia = distancia;
-      puntoMasAlejado = &dato_->espacioVectorial[i];
+      puntoMasAlejado = &espacio[i];
     }
   }
-  return *puntoMasAlejado;
+  return puntoMasAlejado;
 }
 
 /**
@@ -24,23 +25,27 @@ Punto& Voraz::puntoMasAlejado(const Punto& centroGravedad) const {
  */
 void Voraz::ejecutar() {
   Dato resultado = *dato_;
-  EspacioVectorial espacioVectorial = resultado.espacioVectorial;
+  EspacioVectorial subconjunto;
 
   // Obtengo el centro de gravedad
   Punto centroGravedad = dato_->espacioVectorial.calcularCentroGravedad();
 
   do {
     // Calculo el punto más alejado del centro de gravedad
-    Punto& puntoMasAlejado = this->puntoMasAlejado(centroGravedad);
+    Punto* puntoMasAlejado = this->puntoMasAlejado(resultado.espacioVectorial, centroGravedad);
 
     // Agrego el punto más alejado al resultado
-    resultado.espacioVectorial.agregarPunto(puntoMasAlejado);
+    subconjunto.agregarPunto(*puntoMasAlejado);
 
     // Elimino el punto más alejado del espacio vectorial
-    resultado.espacioVectorial.eliminarPunto(puntoMasAlejado);
+    resultado.espacioVectorial.eliminarPunto(*puntoMasAlejado);
 
     // Calculo el nuevo centro de gravedad
-    centroGravedad = espacioVectorial.calcularCentroGravedad();
+    centroGravedad = resultado.espacioVectorial.calcularCentroGravedad();
 
-  } while (resultado.espacioVectorial.getDimension() != numPuntosAlejados_);
+  } while (subconjunto.getDimension() != numPuntosAlejados_);
+
+  resultado.espacioVectorial = subconjunto;
+  // Agrego el resultado al vector de resultados
+  resultados_.push_back(resultado);
 }

@@ -78,8 +78,8 @@ void ejecutarAlgoritmo(vector<Dato>& datos, const int opcion) {
 void ejecutarVoraz(vector<Dato>& datos, int numPuntosAlejados) {
   for (auto& dato : datos) {
     auto voraz = make_unique<Voraz>();
+    voraz->setDato(dato);
     for (int i = 1; i <= numPuntosAlejados; i++) {
-      voraz->setDato(dato);
       voraz->setNumPuntosAlejados(i);
       voraz->ejecutar();
     }

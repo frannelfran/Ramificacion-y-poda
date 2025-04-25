@@ -20,7 +20,7 @@ class Voraz : public Algoritmo {
     inline void setNumPuntosAlejados(const int numPuntosAlejados) { numPuntosAlejados_ = numPuntosAlejados; }
 
   private:
-    Punto& puntoMasAlejado(const Punto& centroGravedad) const;
+    Punto* puntoMasAlejado(EspacioVectorial& espacio, const Punto& centroGravedad) const;
     // Atributos
     int numPuntosAlejados_; // Número de puntos alejados
 };
