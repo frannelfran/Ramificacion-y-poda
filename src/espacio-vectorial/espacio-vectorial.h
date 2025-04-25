@@ -14,6 +14,7 @@ class EspacioVectorial {
 
     // Métodos de la clase
     inline void agregarPunto(const Punto& punto) { espacioVectorial_.push_back(punto); }
+    Punto calcularCentroGravedad() const;
 
     // Getters
     inline int getDimension() const { return espacioVectorial_.size(); }
