@@ -26,6 +26,7 @@ class Algoritmo {
   protected:
     // Datos importantes para el algoritmo
     Dato* dato_;
+    vector<Dato> resultados_;
 };
 
 #endif

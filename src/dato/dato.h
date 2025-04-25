@@ -10,8 +10,8 @@
 struct Dato {
   string nombreFichero; // Nombre del fichero
 
-  // Espacio vectorial
-  EspacioVectorial espacioVectorial;
+  EspacioVectorial espacioVectorial; // Espacio vectorial
+  double tiempoCPU; // Tiempo de CPU
 };
 
 #endif
