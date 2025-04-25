@@ -35,7 +35,6 @@ vector<Dato> leerFicheros(const string& directorio) {
       datos.push_back(dato);
       fichero.close();
     }
-    
   }
   return datos;
 }
