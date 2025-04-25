@@ -15,6 +15,13 @@ class Punto {
     // Constructor
     Punto() {}
     Punto(const vector<double>& punto) : punto_(punto) {}
+
+    // Getters
+    inline int getDimension() const { return punto_.size(); }
+    inline double getCoordenada(int i) const { return punto_[i]; }
+
+    // Sobrecarga del operador de salida
+    friend ostream& operator<<(ostream& os, const Punto& punto);
     
 
   private:
