@@ -26,8 +26,10 @@ class Punto {
 
     // Sobrecarga del operador de salida
     friend ostream& operator<<(ostream& os, const Punto& punto);
+    friend inline bool operator==(const Punto& p1, const Punto& p2) {
+      return p1.punto_ == p2.punto_;
+    }
     
-
   private:
     vector<double> punto_; // Vector que representa el punto en el espacio
 };

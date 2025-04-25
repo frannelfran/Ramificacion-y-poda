@@ -18,3 +18,29 @@ Punto& Voraz::puntoMasAlejado(const Punto& centroGravedad) const {
   }
   return *puntoMasAlejado;
 }
+
+/**
+ * @brief Método para ejecutar el algoritmo Voraz
+ */
+void Voraz::ejecutar() {
+  Dato resultado = *dato_;
+  EspacioVectorial espacioVectorial = resultado.espacioVectorial;
+
+  // Obtengo el centro de gravedad
+  Punto centroGravedad = dato_->espacioVectorial.calcularCentroGravedad();
+
+  do {
+    // Calculo el punto más alejado del centro de gravedad
+    Punto& puntoMasAlejado = this->puntoMasAlejado(centroGravedad);
+
+    // Agrego el punto más alejado al resultado
+    resultado.espacioVectorial.agregarPunto(puntoMasAlejado);
+
+    // Elimino el punto más alejado del espacio vectorial
+    resultado.espacioVectorial.eliminarPunto(puntoMasAlejado);
+
+    // Calculo el nuevo centro de gravedad
+    centroGravedad = espacioVectorial.calcularCentroGravedad();
+
+  } while (resultado.espacioVectorial.getDimension() != numPuntosAlejados_);
+}

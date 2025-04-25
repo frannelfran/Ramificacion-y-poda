@@ -10,16 +10,19 @@
 class Voraz : public Algoritmo {
   public:
     Voraz() : Algoritmo() {} // Constructor por defecto
-    Voraz(Dato& datos) : Algoritmo(datos) {} // Constructor de la clase
+    Voraz(Dato& dato, const int numPuntosAlejados) : Algoritmo(dato), numPuntosAlejados_(numPuntosAlejados)  {} // Constructor de la clase
 
     // Métodos de la clase
     void ejecutar() override;
     void mostrarResultados() override {}
 
-  private:
-    inline Punto calcularCentroGravedad() const { return dato_->espacioVectorial.calcularCentroGravedad(); }
-    Punto& puntoMasAlejado(const Punto& centroGravedad) const;
+    // Setters
+    inline void setNumPuntosAlejados(const int numPuntosAlejados) { numPuntosAlejados_ = numPuntosAlejados; }
 
+  private:
+    Punto& puntoMasAlejado(const Punto& centroGravedad) const;
+    // Atributos
+    int numPuntosAlejados_; // Número de puntos alejados
 };
 
 #endif

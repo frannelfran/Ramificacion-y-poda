@@ -43,34 +43,47 @@ vector<Dato> leerFicheros(const string& directorio) {
 }
 
 /**
- * @brief Función para crear el algoritmo a ejecutar
- * @param opcion Opción seleccionada por el usuario
- * @return Algoritmo* Puntero al algoritmo creado
- */
-Algoritmo* crearAlgoritmo(const int opcion) {
-  Algoritmo* algoritmo = nullptr;
-  switch (opcion) {
-    case 1: {
-      int numPuntosAlejados;
-      cout << "Ingrese el número de puntos alejados: ";
-      cin >> numPuntosAlejados;
-      if (numPuntosAlejados <= 0) {
-        throw invalid_argument("El número de puntos alejados debe ser mayor que cero");
-      }
-      algoritmo = new Voraz();
-      break;
-    }
-    default:
-      throw invalid_argument("Opción no válida");
-  }
-  return algoritmo;
-}
-
-/**
  * @brief Función para mostrar el menú de opciones
  * @return void
  */
 void mostrarMenu() {
   cout << "Seleccione el algoritmo a ejecutar:" << endl;
   cout << "1. Algoritmo Voraz" << endl;
+  cout << "Seleccione una opción: ";
+}
+
+/**
+ * @brief Función para ejecutar el algoritmo seleccionado
+ * @param datos Vector de estructuras Dato con los datos a procesar
+ * @param opcion Opción seleccionada por el usuario
+ * @return void
+ */
+void ejecutarAlgoritmo(vector<Dato>& datos, const int opcion) {
+  switch (opcion) {
+    case 1: 
+      ejecutarVoraz(datos, 5);
+      break;
+    default:
+      invalid_argument("Opción no válida");
+      break;
+  }
+}
+
+/**
+ * @brief Función para ejecutar el algoritmo Voraz
+ * @param datos Vector de estructuras Dato con los datos a procesar
+ * @param numPuntosAlejados Número de puntos alejados a seleccionar
+ * @return void
+ */
+void ejecutarVoraz(vector<Dato>& datos, int numPuntosAlejados) {
+  for (auto& dato : datos) {
+    auto voraz = make_unique<Voraz>();
+    for (int i = 1; i <= numPuntosAlejados; i++) {
+      voraz->setDato(dato);
+      voraz->setNumPuntosAlejados(i);
+      voraz->ejecutar();
+    }
+    voraz->mostrarResultados();
+  }
+  cout << "Algoritmo Voraz ejecutado con éxito." << endl;
 }

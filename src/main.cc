@@ -14,8 +14,10 @@ int main(int argc, char* argv[]) {
   try {
     string directorio = argv[1];
     vector<Dato> datos = leerFicheros(directorio);
-
-    
+    mostrarMenu();
+    int opcion;
+    cin >> opcion;
+    ejecutarAlgoritmo(datos, opcion);
   } catch (const exception& e) {
     cerr << "Error: " << e.what() << endl;
     return 1;
