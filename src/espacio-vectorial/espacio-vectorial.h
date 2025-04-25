@@ -19,6 +19,9 @@ class EspacioVectorial {
     // Getters
     inline int getDimension() const { return espacioVectorial_.size(); }
 
+    // Sobrecarga de operadores
+    Punto& operator[](int i) { return espacioVectorial_[i]; }
+
   private:
     vector<Punto> espacioVectorial_; // Vector de puntos en el espacio vectorial
 };

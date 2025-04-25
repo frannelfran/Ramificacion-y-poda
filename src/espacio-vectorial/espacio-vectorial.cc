@@ -7,14 +7,13 @@
  */
 Punto EspacioVectorial::calcularCentroGravedad() const {
   vector<double> centroGravedad(espacioVectorial_[0].getDimension(), 0.0);
-  for (const auto& punto : espacioVectorial_) {
-    for (size_t i = 0; i < centroGravedad.size(); ++i) {
-      centroGravedad[i] += punto.getCoordenada(i);
+  for (size_t i = 0; i < espacioVectorial_.size(); ++i) {
+    for (size_t j = 0; j < espacioVectorial_[i].getDimension(); ++j) {
+      centroGravedad[j] += espacioVectorial_[i].getCoordenada(j);
     }
   }
-  // Dividir por el número de puntos
-  for (size_t i = 0; i < centroGravedad.size(); ++i) {
-    centroGravedad[i] /= espacioVectorial_.size();
+  for (size_t j = 0; j < centroGravedad.size(); ++j) {
+    centroGravedad[j] /= espacioVectorial_.size();
   }
   return Punto(centroGravedad);
 }
