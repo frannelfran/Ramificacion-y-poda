@@ -14,7 +14,7 @@ class Grasp : public Algoritmo {
 
     // Métodos de la clase
     void ejecutar() override;
-    void mostrarResultados() override {}
+    void mostrarResultados() override;
 
     // Setters
     inline void setMejoresPuntos(const int mejoresPuntos) { mejoresPuntos_ = mejoresPuntos; }

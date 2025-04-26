@@ -17,7 +17,6 @@ class Voraz : public Algoritmo {
 
   private:
     Punto* puntoMasAlejado(EspacioVectorial& espacio, const Punto& centroGravedad) const;
-    double calcularDistancia(const EspacioVectorial& espacio);
 };
 
 #endif

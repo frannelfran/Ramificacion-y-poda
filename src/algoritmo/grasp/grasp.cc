@@ -62,3 +62,40 @@ void Grasp::ejecutar() {
   resultados_.push_back(resultado);
 }
 
+/**
+ * @brief Método para mostrar los resultados del algoritmo GRASP
+ * @return void
+ */
+void Grasp::mostrarResultados() {
+  static bool cabeceraMostrada = false;
+
+  if (!cabeceraMostrada) {
+    // Cabecera
+    cout << "------------------------------------------------------------------" << endl;
+    cout << left 
+    << setw(20) << "Problema" 
+    << setw(6) << "n" 
+    << setw(6) << "K" 
+    << setw(6) << "m" 
+    << setw(12) << "|LRC|"
+    << setw(6) << "z"
+    << setw(6) << "S"
+    << setw(12) << "Tiempo CPU" 
+    << endl;
+    cout << "------------------------------------------------------------------" << endl;
+    cabeceraMostrada = true;
+  }
+
+  // Muestro los resultados
+  for (auto& resultado : resultados_) {
+    cout << left 
+    << setw(20) << resultado.nombreFichero 
+    << setw(6) << resultado.espacioVectorial.getDimension() 
+    << setw(6) << numPuntosAlejados_ 
+    << setw(6) << mejoresPuntos_
+    << setw(12) << calcularDistancia(resultado.espacioVectorial)
+    << setw(6) << resultado.espacioVectorial.getDimension()
+    << endl;
+  }
+  cout << "------------------------------------------------------------------" << endl;
+}

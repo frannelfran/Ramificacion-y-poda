@@ -21,22 +21,6 @@ Punto* Voraz::puntoMasAlejado(EspacioVectorial& espacio, const Punto& centroGrav
 }
 
 /**
- * @brief Método para sumar las distancia de los puntos seleccionados
- * @param espacio Espacio vectorial
- * @return Distancia total
- */
-double Voraz::calcularDistancia(const EspacioVectorial& espacio) {
-  double distancia = 0.0;
-  size_t n = espacio.getDimension();
-  for (size_t i = 0; i < n - 1; ++i) {
-    for (size_t j = i + 1; j < n; ++j) {
-      distancia += espacio[i].calcularDistancia(espacio[j]);
-    }
-  }
-  return distancia;
-}
-
-/**
  * @brief Método para ejecutar el algoritmo Voraz
  */
 void Voraz::ejecutar() {

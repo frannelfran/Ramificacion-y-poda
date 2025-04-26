@@ -21,6 +21,8 @@ class Algoritmo {
     virtual void ejecutar() = 0;
     virtual void mostrarResultados() = 0;
 
+    double calcularDistancia(const EspacioVectorial& espacio);
+
     // Setters
     inline void setDato(Dato& dato) { dato_ = &dato; }
     inline void setNumPuntosAlejados(const int numPuntosAlejados) { numPuntosAlejados_ = numPuntosAlejados; }
