@@ -7,6 +7,7 @@
 
 #include "../dato/dato.h"
 #include <iomanip>
+#include <chrono> // Para medir el tiempo de ejecución
 
 class Algoritmo {
   public:

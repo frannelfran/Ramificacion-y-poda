@@ -24,6 +24,7 @@ Punto* Voraz::puntoMasAlejado(EspacioVectorial& espacio, const Punto& centroGrav
  * @brief Método para ejecutar el algoritmo Voraz
  */
 void Voraz::ejecutar() {
+  auto start = chrono::high_resolution_clock::now();
   Dato resultado = *dato_;
   EspacioVectorial subconjunto;
 
@@ -44,6 +45,8 @@ void Voraz::ejecutar() {
     centroGravedad = resultado.espacioVectorial.calcularCentroGravedad();
 
   } while (subconjunto.getDimension() != numPuntosAlejados_);
+  auto end = chrono::high_resolution_clock::now();
+  resultado.tiempoCPU = chrono::duration<double>(end - start).count(); // Tiempo en segundos
 
   resultado.espacioVectorial = subconjunto;
   // Agrego el resultado al vector de resultados
@@ -83,6 +86,7 @@ void Voraz::mostrarResultados() {
     << setw(6) << resultado.espacioVectorial.getDimension()
     << setw(12) << distancia
     << setw(6) << resultado.espacioVectorial.getDimension()
+    << setw(12) << resultado.tiempoCPU
     << endl;
   }
   cout << "------------------------------------------------------------------" << endl;

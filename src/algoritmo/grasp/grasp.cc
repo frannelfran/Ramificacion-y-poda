@@ -37,6 +37,7 @@ Punto* Grasp::puntoMasAlejado(EspacioVectorial& espacio, const Punto& centroGrav
  * @return void
  */
 void Grasp::ejecutar() {
+  auto start = chrono::high_resolution_clock::now();
   Dato resultado = *dato_;
   EspacioVectorial subconjunto;
 
@@ -62,6 +63,8 @@ void Grasp::ejecutar() {
   // Realizo la búsqueda local
   BusquedaLocal busquedaLocal(dato_->espacioVectorial, &resultado.espacioVectorial);
   busquedaLocal.mejorarRutas();
+  auto end = chrono::high_resolution_clock::now();
+  resultado.tiempoCPU = chrono::duration<double>(end - start).count(); // Tiempo en segundos
 
   // Agrego el resultado al vector de resultados
   resultados_.push_back(resultado);
@@ -76,7 +79,7 @@ void Grasp::mostrarResultados() {
 
   if (!cabeceraMostrada) {
     // Cabecera
-    cout << "------------------------------------------------------------------" << endl;
+    cout << "-----------------------------------------------------------------------------" << endl;
     cout << left 
     << setw(20) << "Problema" 
     << setw(6) << "n" 
@@ -87,7 +90,7 @@ void Grasp::mostrarResultados() {
     << setw(6) << "S"
     << setw(12) << "Tiempo CPU" 
     << endl;
-    cout << "------------------------------------------------------------------" << endl;
+    cout << "-----------------------------------------------------------------------------" << endl;
     cabeceraMostrada = true;
   }
 
@@ -103,8 +106,8 @@ void Grasp::mostrarResultados() {
     << setw(10) << LRC++
     << setw(12) << calcularDistancia(resultado.espacioVectorial)
     << setw(6) << resultado.espacioVectorial.getDimension()
-    
+    << setw(12) << resultado.tiempoCPU
     << endl;
   }
-  cout << "------------------------------------------------------------------" << endl;
+  cout << "-----------------------------------------------------------------------------" << endl;
 }
