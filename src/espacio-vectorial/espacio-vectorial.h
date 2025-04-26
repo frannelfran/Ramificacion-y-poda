@@ -22,6 +22,14 @@ class EspacioVectorial {
 
     // Sobrecarga de operadores
     Punto& operator[](int i) { return espacioVectorial_[i]; }
+    const Punto& operator[](int i) const { return espacioVectorial_[i]; }
+
+    friend ostream& operator<<(ostream& os, const EspacioVectorial& espacio) {
+      for (const auto& punto : espacio.espacioVectorial_) {
+        os << punto << " ";
+      }
+      return os;
+    }
 
   private:
     vector<Punto> espacioVectorial_; // Vector de puntos en el espacio vectorial

@@ -21,6 +21,22 @@ Punto* Voraz::puntoMasAlejado(EspacioVectorial& espacio, const Punto& centroGrav
 }
 
 /**
+ * @brief Método para sumar las distancia de los puntos seleccionados
+ * @param espacio Espacio vectorial
+ * @return Distancia total
+ */
+double Voraz::calcularDistancia(const EspacioVectorial& espacio) {
+  double distancia = 0.0;
+  size_t n = espacio.getDimension();
+  for (size_t i = 0; i < n - 1; ++i) {
+    for (size_t j = i + 1; j < n; ++j) {
+      distancia += espacio[i].calcularDistancia(espacio[j]);
+    }
+  }
+  return distancia;
+}
+
+/**
  * @brief Método para ejecutar el algoritmo Voraz
  */
 void Voraz::ejecutar() {
@@ -59,26 +75,31 @@ void Voraz::mostrarResultados() {
 
   if (!cabeceraMostrada) {
     // Cabecera
-    cout << "---------------------------------------------" << endl;
+    cout << "------------------------------------------------------------------" << endl;
     cout << left 
     << setw(20) << "Problema" 
     << setw(6) << "n" 
     << setw(6) << "K" 
     << setw(6) << "m" 
+    << setw(12) << "z"
+    << setw(6) << "S"
     << setw(12) << "Tiempo CPU" 
     << endl;
-    cout << "---------------------------------------------" << endl;
+    cout << "------------------------------------------------------------------" << endl;
     cabeceraMostrada = true;
   }
 
   // Muestro los resultados
-  for (const auto& resultado : resultados_) {
+  for (auto& resultado : resultados_) {
+    double distancia = calcularDistancia(resultado.espacioVectorial);
     cout << left 
     << setw(20) << resultado.nombreFichero
     << setw(6) << resultado.numPuntos
     << setw(6) << resultado.tamanio
     << setw(6) << resultado.espacioVectorial.getDimension()
+    << setw(12) << distancia
+    << setw(6) << resultado.espacioVectorial.getDimension()
     << endl;
   }
-  cout << "---------------------------------------------" << endl;
+  cout << "------------------------------------------------------------------" << endl;
 }
