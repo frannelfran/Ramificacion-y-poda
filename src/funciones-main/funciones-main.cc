@@ -96,7 +96,7 @@ void ejecutarVoraz(vector<Dato>& datos, int numPuntosAlejados) {
   for (auto& dato : datos) {
     auto voraz = make_unique<Voraz>();
     voraz->setDato(dato);
-    for (int i = 1; i <= numPuntosAlejados; i++) {
+    for (int i = 2; i <= numPuntosAlejados; i++) {
       voraz->setNumPuntosAlejados(i);
       voraz->ejecutar();
     }
@@ -115,9 +115,9 @@ void ejecutarGrasp(vector<Dato>& datos, int numPuntosAlejados) {
   for (auto& dato : datos) {
     auto grasp = make_unique<Grasp>();
     grasp->setDato(dato);
-    for (int i = 1; i <= numPuntosAlejados; i++) {
+    for (int i = 2; i <= numPuntosAlejados; i++) {
       grasp->setNumPuntosAlejados(i);
-      for (int j = 1; j <= 2; i++) {
+      for (int j = 1; j <= 2; j++) {
         for (int k = 2; k <= 3; k++) {
           grasp->setMejoresPuntos(k);
           grasp->ejecutar();

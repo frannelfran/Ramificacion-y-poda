@@ -13,7 +13,8 @@ Punto* Grasp::puntoMasAlejado(EspacioVectorial& espacio, const Punto& centroGrav
 
   for (size_t i = 0; i < espacio.getDimension(); ++i) {
     double distancia = espacio[i].calcularDistancia(centroGravedad);
-    if (distancia > maxDistancia && puntosMasAlejados.size() < mejoresPuntos_) {
+    if (puntosMasAlejados.size() == mejoresPuntos_) break;
+    if (distancia > maxDistancia) {
       Punto* punto = &espacio[i];
       maxDistancia = distancia;
       // Compruebo si el punto ya está en la lista de puntos más alejados
@@ -77,8 +78,8 @@ void Grasp::mostrarResultados() {
     << setw(6) << "n" 
     << setw(6) << "K" 
     << setw(6) << "m" 
-    << setw(12) << "|LRC|"
-    << setw(6) << "z"
+    << setw(10) << "|LRC|"
+    << setw(12) << "z"
     << setw(6) << "S"
     << setw(12) << "Tiempo CPU" 
     << endl;
@@ -87,14 +88,18 @@ void Grasp::mostrarResultados() {
   }
 
   // Muestro los resultados
+  int LRC = 2;
   for (auto& resultado : resultados_) {
+    if (LRC > 3) LRC = 2;
     cout << left 
     << setw(20) << resultado.nombreFichero 
-    << setw(6) << resultado.espacioVectorial.getDimension() 
-    << setw(6) << numPuntosAlejados_ 
-    << setw(6) << mejoresPuntos_
+    << setw(6) << resultado.numPuntos
+    << setw(6) << resultado.tamanio
+    << setw(6) << resultado.espacioVectorial.getDimension()
+    << setw(10) << LRC++
     << setw(12) << calcularDistancia(resultado.espacioVectorial)
     << setw(6) << resultado.espacioVectorial.getDimension()
+    
     << endl;
   }
   cout << "------------------------------------------------------------------" << endl;
