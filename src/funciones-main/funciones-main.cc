@@ -62,6 +62,7 @@ vector<Dato> leerFicheros(const string& directorio) {
 void mostrarMenu() {
   cout << "Seleccione el algoritmo a ejecutar:" << endl;
   cout << "1. Algoritmo Voraz" << endl;
+  cout << "2. Algoritmo GRASP" << endl;
   cout << "Seleccione una opción: ";
 }
 
@@ -75,6 +76,9 @@ void ejecutarAlgoritmo(vector<Dato>& datos, const int opcion) {
   switch (opcion) {
     case 1: 
       ejecutarVoraz(datos, 5);
+      break;
+    case 2:
+      ejecutarGrasp(datos, 5);
       break;
     default:
       invalid_argument("Opción no válida");
@@ -99,4 +103,28 @@ void ejecutarVoraz(vector<Dato>& datos, int numPuntosAlejados) {
     voraz->mostrarResultados();
   }
   cout << "Algoritmo Voraz ejecutado con éxito." << endl;
+}
+
+/**
+ * @brief Función para ejecutar el algoritmo GRASP
+ * @param datos Vector de estructuras Dato con los datos a procesar
+ * @param numPuntosAlejados Número de puntos alejados a seleccionar
+ * @return void
+ */
+void ejecutarGrasp(vector<Dato>& datos, int numPuntosAlejados) {
+  for (auto& dato : datos) {
+    auto grasp = make_unique<Grasp>();
+    grasp->setDato(dato);
+    for (int i = 1; i <= numPuntosAlejados; i++) {
+      grasp->setNumPuntosAlejados(i);
+      for (int j = 1; j <= 2; i++) {
+        for (int k = 2; k <= 3; k++) {
+          grasp->setMejoresPuntos(k);
+          grasp->ejecutar();
+        }
+      }
+    }
+    grasp->mostrarResultados();
+  }
+  cout << "Algoritmo GRASP ejecutado con éxito." << endl;
 }

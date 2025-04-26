@@ -23,11 +23,13 @@ class Algoritmo {
 
     // Setters
     inline void setDato(Dato& dato) { dato_ = &dato; }
+    inline void setNumPuntosAlejados(const int numPuntosAlejados) { numPuntosAlejados_ = numPuntosAlejados; }
 
   protected:
     // Datos importantes para el algoritmo
     Dato* dato_;
     vector<Dato> resultados_;
+    int numPuntosAlejados_;
 };
 
 #endif
