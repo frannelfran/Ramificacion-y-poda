@@ -59,6 +59,10 @@ void Grasp::ejecutar() {
   } while (subconjunto.getDimension() != numPuntosAlejados_);
 
   resultado.espacioVectorial = subconjunto;
+  // Realizo la búsqueda local
+  BusquedaLocal busquedaLocal(dato_->espacioVectorial, &resultado.espacioVectorial);
+  busquedaLocal.mejorarRutas();
+
   // Agrego el resultado al vector de resultados
   resultados_.push_back(resultado);
 }

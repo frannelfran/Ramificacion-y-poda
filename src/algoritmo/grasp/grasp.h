@@ -5,6 +5,7 @@
 #define C_Grasp_H
 
 #include "../algoritmo.h"
+#include "busqueda-local/busqueda-local.h"
 #include <random>
 
 class Grasp : public Algoritmo {
