@@ -69,8 +69,8 @@ void Voraz::mostrarResultados() {
     << setw(6) << "K" 
     << setw(6) << "m" 
     << setw(12) << "z"
-    << setw(6) << "S"
     << setw(12) << "Tiempo CPU" 
+    << setw(12) << "S"
     << endl;
     cout << "------------------------------------------------------------------" << endl;
     cabeceraMostrada = true;
@@ -85,8 +85,8 @@ void Voraz::mostrarResultados() {
     << setw(6) << resultado.tamanio
     << setw(6) << resultado.espacioVectorial.getDimension()
     << setw(12) << distancia
-    << setw(6) << resultado.espacioVectorial.getDimension()
     << setw(12) << resultado.tiempoCPU
+    << setw(0) << resultado.espacioVectorial
     << endl;
   }
   cout << "------------------------------------------------------------------" << endl;

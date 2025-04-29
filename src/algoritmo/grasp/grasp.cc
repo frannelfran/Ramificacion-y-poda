@@ -87,8 +87,8 @@ void Grasp::mostrarResultados() {
     << setw(6) << "m" 
     << setw(10) << "|LRC|"
     << setw(12) << "z"
-    << setw(6) << "S"
     << setw(12) << "Tiempo CPU" 
+    << setw(6) << "S"
     << endl;
     cout << "-----------------------------------------------------------------------------" << endl;
     cabeceraMostrada = true;
@@ -105,8 +105,8 @@ void Grasp::mostrarResultados() {
     << setw(6) << resultado.espacioVectorial.getDimension()
     << setw(10) << LRC++
     << setw(12) << calcularDistancia(resultado.espacioVectorial)
-    << setw(6) << resultado.espacioVectorial.getDimension()
     << setw(12) << resultado.tiempoCPU
+    << setw(0) << resultado.espacioVectorial
     << endl;
   }
   cout << "-----------------------------------------------------------------------------" << endl;
