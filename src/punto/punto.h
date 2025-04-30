@@ -15,7 +15,8 @@ class Punto {
   public:
     // Constructor
     Punto() {}
-    Punto(const vector<double>& punto) : punto_(punto) {}
+    Punto(const int& id, const vector<double>& punto) : identificador_(id), punto_(punto) {}
+    Punto(const vector<double>& punto) : identificador_(-1), punto_(punto) {}
 
     // Métodos de la clase
     double calcularDistancia(const Punto& otro) const;
@@ -31,6 +32,7 @@ class Punto {
     }
     
   private:
+    int identificador_; // Identificador del punto
     vector<double> punto_; // Vector que representa el punto en el espacio
 };
 

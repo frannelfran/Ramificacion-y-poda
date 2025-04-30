@@ -46,7 +46,7 @@ vector<Dato> leerFicheros(const string& directorio) {
         for (int j = 0; j < tamanio; j++) {
           fichero >> punto[j];
         }
-        dato.espacioVectorial.agregarPunto(Punto(punto));
+        dato.espacioVectorial.agregarPunto(Punto(i + 1, punto));
       }
       datos.push_back(dato);
       fichero.close();
