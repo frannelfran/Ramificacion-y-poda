@@ -25,9 +25,14 @@ class EspacioVectorial {
     const Punto& operator[](int i) const { return espacioVectorial_[i]; }
 
     friend ostream& operator<<(ostream& os, const EspacioVectorial& espacio) {
-      for (const auto& punto : espacio.espacioVectorial_) {
-        os << punto << " ";
+      os << "{";
+      for (size_t i = 0; i < espacio.espacioVectorial_.size(); ++i) {
+        if (i > 0) {
+          os << ", ";
+        }
+        os << espacio.espacioVectorial_[i];
       }
+      os << "}";
       return os;
     }
 
