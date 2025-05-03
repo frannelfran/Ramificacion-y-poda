@@ -24,6 +24,7 @@ class Punto {
     // Getters
     inline int getDimension() const { return punto_.size(); }
     inline double getCoordenada(int i) const { return punto_[i]; }
+    inline int getIndice() const { return identificador_; }
 
     // Sobrecarga del operador de salida
     friend ostream& operator<<(ostream& os, const Punto& punto);

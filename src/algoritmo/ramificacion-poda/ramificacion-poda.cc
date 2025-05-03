@@ -188,10 +188,26 @@ void RamificacionPoda::ejecutar() {
   algoritmo_->setDato(datoInicial);
   algoritmo_->setNumPuntosAlejados(numPuntosAlejados_);
   algoritmo_->ejecutar();
-  
-  // Inicializar la mejor solución
-  mejorSolucion_ = 0.0;
-  mejorConjunto_.clear();
+
+  // Calculo el valor de la mejor solución inicial
+  if (algoritmo_->getResultados().empty()) {
+    mejorSolucion_ = 0.0;
+    mejorConjunto_.clear();
+  } else {
+    // Obtengo la solución generada por el algoritmo (Voraz o GRASP)
+    const Dato& solucionInicial = algoritmo_->getResultados().back();
+    const EspacioVectorial& espacioSolucion = solucionInicial.espacioVectorial;
+    
+    // Convierto los puntos de la solución inicial a índices en el espacio original
+    mejorConjunto_.clear();
+    for (size_t i = 0; i < espacioSolucion.getDimension(); ++i) {
+      int indiceOriginal = espacioSolucion[i].getIndice() - 1;  // Ajustar a índice base 0
+      mejorConjunto_.insert(indiceOriginal);
+    }
+    
+    // Calculo la suma de distancias entre todos los pares de puntos seleccionados
+    mejorSolucion_ = calcularSumaDistancias(mejorConjunto_);
+  }
   
   // Inicializar la pila de nodos
   stack<Nodo> pila;

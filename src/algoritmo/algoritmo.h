@@ -24,6 +24,9 @@ class Algoritmo {
 
     double calcularDistancia(const EspacioVectorial& espacio);
 
+    // Getters
+    inline vector<Dato>& getResultados() { return resultados_; }
+
     // Setters
     inline void setDato(Dato& dato) { dato_ = &dato; }
     inline void setNumPuntosAlejados(const int numPuntosAlejados) { numPuntosAlejados_ = numPuntosAlejados; }
