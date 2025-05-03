@@ -63,6 +63,7 @@ void mostrarMenu() {
   cout << "Seleccione el algoritmo a ejecutar:" << endl;
   cout << "1. Algoritmo Voraz" << endl;
   cout << "2. Algoritmo GRASP" << endl;
+  cout << "3. Algoritmo de Ramificación y Poda" << endl;
   cout << "Seleccione una opción: ";
 }
 
@@ -79,6 +80,9 @@ void ejecutarAlgoritmo(vector<Dato>& datos, const int opcion) {
       break;
     case 2:
       ejecutarGrasp(datos, 5);
+      break;
+    case 3:
+      ejecutarRamificacionPoda(datos, 5);
       break;
     default:
       invalid_argument("Opción no válida");
@@ -127,4 +131,24 @@ void ejecutarGrasp(vector<Dato>& datos, int numPuntosAlejados) {
     grasp->mostrarResultados();
   }
   cout << "Algoritmo GRASP ejecutado con éxito." << endl;
+}
+
+/**
+ * @brief Función para ejecutar el algoritmo de Ramificación y Poda
+ * @param datos Vector de estructuras Dato con los datos a procesar
+ * @param numPuntosAlejados Número de puntos alejados a seleccionar
+ * @return void
+ */
+void ejecutarRamificacionPoda(vector<Dato>& datos, int numPuntosAlejados) {
+  for (auto& dato : datos) {
+    auto ramificacionPoda = make_unique<RamificacionPoda>();
+    ramificacionPoda->setAlgoritmo(new Voraz());
+    ramificacionPoda->setDato(dato);
+    for (int i = 2; i <= numPuntosAlejados; i++) {
+      ramificacionPoda->setNumPuntosAlejados(i);
+      ramificacionPoda->ejecutar();
+    }
+    ramificacionPoda->mostrarResultados();
+  }
+  cout << "Algoritmo de Ramificación y Poda ejecutado con éxito." << endl;
 }

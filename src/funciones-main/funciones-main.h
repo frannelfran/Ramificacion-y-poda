@@ -8,6 +8,7 @@
 #include "../dato/dato.h"
 #include "../algoritmo/voraz/voraz.h"
 #include "../algoritmo/grasp/grasp.h"
+#include "../algoritmo/ramificacion-poda/ramificacion-poda.h"
 #include <stdexcept> // Para las excepciones
 #include <filesystem> // Para la gestión de ficheros
 #include <fstream> // Para la lectura de ficheros
@@ -21,6 +22,7 @@ vector<Dato> ordenarDatos(vector<Dato>& datos);
 void ejecutarAlgoritmo(vector<Dato>& datos, const int opcion);
 void ejecutarVoraz(vector<Dato>& datos, int numPuntosAlejados);
 void ejecutarGrasp(vector<Dato>& datos, int numPuntosAlejados);
+void ejecutarRamificacionPoda(vector<Dato>& datos, int numPuntosAlejados);
 
 void mostrarMenu(); // Mostrar el menú de opciones
 
