@@ -142,7 +142,6 @@ void ejecutarGrasp(vector<Dato>& datos, int numPuntosAlejados) {
 void ejecutarRamificacionPoda(vector<Dato>& datos, int numPuntosAlejados) {
   for (auto& dato : datos) {
     auto ramificacionPoda = make_unique<RamificacionPoda>();
-    ramificacionPoda->setAlgoritmo(new Voraz());
     ramificacionPoda->setDato(dato);
     for (int i = 2; i <= numPuntosAlejados; i++) {
       ramificacionPoda->setNumPuntosAlejados(i);

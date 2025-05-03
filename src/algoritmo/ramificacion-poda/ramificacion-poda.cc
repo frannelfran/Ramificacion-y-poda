@@ -185,7 +185,7 @@ void RamificacionPoda::ejecutar() {
   
   // Generar cota inferior inicial usando el algoritmo proporcionado
   Dato datoInicial = *dato_;
-  algoritmo_->setDato(*dato_);
+  algoritmo_->setDato(datoInicial);
   algoritmo_->setNumPuntosAlejados(numPuntosAlejados_);
   algoritmo_->ejecutar();
   

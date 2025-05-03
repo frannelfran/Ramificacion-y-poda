@@ -5,7 +5,8 @@
 #ifndef C_RamificacionPoda_H
 #define C_RamificacionPoda_H
 
-#include "../algoritmo.h"
+#include "../voraz/voraz.h"
+#include "../grasp/grasp.h"
 #include <stack>
 #include <set>
 #include <algorithm>
@@ -31,9 +32,6 @@ class RamificacionPoda : public Algoritmo {
     void ejecutar() override;
     void mostrarResultados() override;
 
-    // Setters
-    inline void setAlgoritmo(Algoritmo* algoritmo) { algoritmo_ = algoritmo; }
-
   private:
     // Métodos privados
     void preprocesamiento();
@@ -46,7 +44,7 @@ class RamificacionPoda : public Algoritmo {
     vector<vector<double>> matrizDistancias_;          // Matriz de distancias entre todos los puntos
     vector<double> sumatorioDistancias_;               // Suma de distancias para cada punto
     vector<vector<int>> vecinosOrdenados_;             // Vecinos ordenados por distancia para cada punto
-    Algoritmo* algoritmo_;                             // Algoritmo utilizado para obtener cota inicial
+    unique_ptr<Algoritmo> algoritmo_ = make_unique<Grasp>();          // Algoritmo utilizado para obtener cota inicial
     double mejorSolucion_;                             // Mejor solución encontrada hasta el momento
     set<int> mejorConjunto_;                           // Mejor conjunto de puntos encontrado
     int nodosGenerados_;                               // Contador de nodos generados
