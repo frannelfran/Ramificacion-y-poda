@@ -84,8 +84,8 @@ void Voraz::mostrarResultados() {
     << setw(6) << resultado.numPuntos
     << setw(6) << resultado.tamanio
     << setw(6) << resultado.espacioVectorial.getDimension()
-    << setw(12) << distancia
-    << setw(12) << resultado.tiempoCPU
+    << setw(12) << fixed << setprecision(2) << distancia
+    << setw(12) << fixed << setprecision(5) << resultado.tiempoCPU
     << setw(0) << resultado.espacioVectorial
     << endl;
   }

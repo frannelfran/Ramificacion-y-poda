@@ -104,8 +104,8 @@ void Grasp::mostrarResultados() {
     << setw(6) << resultado.tamanio
     << setw(6) << resultado.espacioVectorial.getDimension()
     << setw(10) << LRC++
-    << setw(12) << calcularDistancia(resultado.espacioVectorial)
-    << setw(12) << resultado.tiempoCPU
+    << setw(12) << fixed << setprecision(2) << calcularDistancia(resultado.espacioVectorial)
+    << setw(12) << fixed << setprecision(5) << resultado.tiempoCPU
     << setw(0) << resultado.espacioVectorial
     << endl;
   }
