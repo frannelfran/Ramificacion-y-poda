@@ -52,7 +52,6 @@ double RamificacionPoda::calcularSumaDistancias(const set<int>& seleccionados) c
       suma += matrizDistancias_[*it1][*it2];
     }
   }
-  
   return suma;
 }
 
