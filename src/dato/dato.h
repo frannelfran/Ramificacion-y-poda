@@ -15,6 +15,7 @@ struct Dato {
 
   EspacioVectorial espacioVectorial; // Espacio vectorial
   double tiempoCPU; // Tiempo de CPU
+  size_t nodosGenerados; // Número de nodos generados en el algoritmo de ramificación y poda
 };
 
 #endif

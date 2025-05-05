@@ -1,170 +1,73 @@
 #include "ramificacion-poda.h"
 
 /**
- * @brief Método para el preprocesamiento de datos
+ * @brief Método para calcular precomputaciones necesarias para el algoritmo
  * @return void
  */
-void RamificacionPoda::preprocesamiento() {
-  // Obtener el espacio vectorial
-  EspacioVectorial espacioVectorial = dato_->espacioVectorial;
-  int n = espacioVectorial.getDimension();
+void RamificacionPoda::calcularPrecomputaciones() {
+  const size_t n = dato_->espacioVectorial.getDimension();
+  distanciasTotal.resize(n, 0.0);
+  indicesOrdenados.resize(n);
   
-  // Inicializar la matriz de distancias y el sumatorio de distancias
-  matrizDistancias_.resize(n, vector<double>(n, 0.0));
-  sumatorioDistancias_.resize(n, 0.0);
-  vecinosOrdenados_.resize(n);
-
-  // Calcular la matriz de distancias entre todos los puntos
-  for (int i = 0; i < n; ++i) {
-    vector<pair<double, int>> vecinos;
-    for (int j = 0; j < n; ++j) {
-      if (i != j) {
-        // Calcular distancia entre puntos
-        matrizDistancias_[i][j] = espacioVectorial[i].calcularDistancia(espacioVectorial[j]);
-        sumatorioDistancias_[i] += matrizDistancias_[i][j];
-        vecinos.push_back({matrizDistancias_[i][j], j});
+  // Calcular la distancia total para cada punto
+  for (size_t v = 0; v < n; ++v) {
+    for (size_t u = 0; u < n; ++u) {
+      if (v != u) {
+        double dist = dato_->espacioVectorial[v].calcularDistancia(dato_->espacioVectorial[u]);
+        distanciasTotal[v] += dist;
       }
     }
     
-    // Ordenar vecinos por distancia descendente
-    sort(vecinos.begin(), vecinos.end(), greater<pair<double, int>>());
-    
-    // Guardar los índices de los vecinos ordenados
-    for (const auto& vecino : vecinos) {
-      vecinosOrdenados_[i].push_back(vecino.second);
+    // Crear índices ordenados por distancia descendente
+    for (size_t u = 0; u < n; ++u) {
+      if (v != u) {
+        indicesOrdenados[v].push_back(u);
+      }
     }
+    
+    // Ordenar índices de mayor a menor distancia
+    std::sort(indicesOrdenados[v].begin(), indicesOrdenados[v].end(), 
+      [this, v](int a, int b) {
+        double distA = dato_->espacioVectorial[v].calcularDistancia(dato_->espacioVectorial[a]);
+        double distB = dato_->espacioVectorial[v].calcularDistancia(dato_->espacioVectorial[b]);
+        return distA > distB;
+    });
   }
 }
 
 /**
- * @brief Método para calcular la suma de distancias entre los puntos seleccionados
- * @param seleccionados Conjunto de puntos seleccionados
- * @return double Suma de distancias
+ * @brief Método para calcular la suma de distancias entre pares de puntos seleccionados
+ * @param seleccion Conjunto de índices de puntos seleccionados
+ * @return Suma de distancias
  */
-double RamificacionPoda::calcularSumaDistancias(const set<int>& seleccionados) const {
+double RamificacionPoda::calcularSumaParejas(const std::set<int>& seleccion) const {
   double suma = 0.0;
   
-  // Calcular la suma de distancias entre todos los pares de puntos seleccionados
-  for (auto it1 = seleccionados.begin(); it1 != seleccionados.end(); ++it1) {
-    auto it2 = it1;
-    ++it2;
-    for (; it2 != seleccionados.end(); ++it2) {
-      suma += matrizDistancias_[*it1][*it2];
+  for (auto i = seleccion.begin(); i != seleccion.end(); ++i) {
+    auto j = i;
+    ++j;
+    for (; j != seleccion.end(); ++j) {
+      suma += dato_->espacioVectorial[*i].calcularDistancia(dato_->espacioVectorial[*j]);
     }
   }
+  
   return suma;
 }
 
 /**
- * @brief Método para aplicar la regla de dominancia
- * @param nodo Nodo actual en el árbol de búsqueda
- * @return bool true si el nodo debe ser podado, false en caso contrario
+ * @brief Método para calcular la suma de distancias entre un punto v y los puntos seleccionados
+ * @param v Índice del punto
+ * @param seleccion Conjunto de índices de puntos seleccionados
+ * @return Suma de distancias
  */
-bool RamificacionPoda::aplicarReglaDominancia(const Nodo& nodo) const {
-  // Si no hay puntos seleccionados, no aplicar regla de dominancia
-  if (nodo.seleccionados.empty()) {
-    return false;
+double RamificacionPoda::calcularSumaSelVNoSel(int v, const std::set<int>& seleccion) const {
+  double suma = 0.0;
+  
+  for (const auto& s : seleccion) {
+    suma += dato_->espacioVectorial[s].calcularDistancia(dato_->espacioVectorial[v]);
   }
   
-  // Encontrar el punto seleccionado con menor suma de distancias
-  double minSel = numeric_limits<double>::max();
-  for (int v : nodo.seleccionados) {
-    minSel = min(minSel, sumatorioDistancias_[v]);
-  }
-  
-  // Encontrar el punto no seleccionado con mayor suma de distancias
-  double maxNoSel = -1.0;
-  for (int i = 0; i < dato_->espacioVectorial.getDimension(); ++i) {
-    if (nodo.seleccionados.find(i) == nodo.seleccionados.end()) {
-      maxNoSel = max(maxNoSel, sumatorioDistancias_[i]);
-    }
-  }
-  
-  // Si el mínimo seleccionado es menor que el máximo no seleccionado, podar
-  return minSel < maxNoSel;
-}
-
-/**
- * @brief Método para calcular la cota superior para un nodo
- * @param nodo Nodo actual en el árbol de búsqueda
- * @param valoresZ Vector para almacenar los valores z de los candidatos
- * @return double Cota superior para el nodo
- */
-double RamificacionPoda::calcularCotaSuperior(const Nodo& nodo, vector<pair<double, int>>& valoresZ) const {
-  // Calcular la suma actual de distancias
-  double z1 = calcularSumaDistancias(nodo.seleccionados);
-  int n = dato_->espacioVectorial.getDimension();
-  int m = numPuntosAlejados_;
-  int k = nodo.nivel;
-  
-  // Generar lista de candidatos (puntos no seleccionados)
-  vector<int> candidatos;
-  for (int i = 0; i < n; ++i) {
-    if (nodo.seleccionados.find(i) == nodo.seleccionados.end()) {
-      candidatos.push_back(i);
-    }
-  }
-  
-  // Calcular la contribución potencial de cada candidato
-  valoresZ.clear();
-  for (int v : candidatos) {
-    // Contribución a puntos ya seleccionados
-    double contribucionSel = 0.0;
-    for (int s : nodo.seleccionados) {
-      contribucionSel += matrizDistancias_[v][s];
-    }
-    
-    // Contribución a puntos no seleccionados
-    double contribucionNoSel = 0.0;
-    int contador = 0;
-    for (int u : vecinosOrdenados_[v]) {
-      // Solo considerar puntos no seleccionados y diferentes al candidato
-      if (nodo.seleccionados.find(u) == nodo.seleccionados.end() && u != v) {
-        contribucionNoSel += matrizDistancias_[v][u];
-        contador++;
-        if (contador >= m - k - 1) break;
-      }
-    }
-    contribucionNoSel *= 0.5; // Factor de 0.5 según el pseudocódigo
-    
-    // Valor z para este candidato
-    double z_v = contribucionSel + contribucionNoSel;
-    valoresZ.push_back({z_v, v});
-  }
-  
-  // Ordenar candidatos por valor z descendente
-  sort(valoresZ.begin(), valoresZ.end(), greater<pair<double, int>>());
-  
-  // Calcular cota superior usando los mejores candidatos
-  double UB = z1;
-  for (int i = 0; i < min(m - k, static_cast<int>(valoresZ.size())); ++i) {
-    UB += valoresZ[i].first;
-  }
-  
-  return UB;
-}
-
-/**
- * @brief Método para generar los hijos de un nodo
- * @param nodo Nodo actual en el árbol de búsqueda
- * @param cotaInferior Cota inferior actual
- * @param pila Pila de nodos por explorar
- * @param valoresZ Vector con los valores z de los candidatos
- */
-void RamificacionPoda::generarHijos(const Nodo& nodo, double cotaInferior, stack<Nodo>& pila, const vector<pair<double, int>>& valoresZ) {
-  // Para cada candidato (ordenados por valor z descendente)
-  for (const auto& [z_v, v] : valoresZ) {
-    // Generar un nuevo conjunto de seleccionados incluyendo el candidato
-    set<int> nuevosSeleccionados = nodo.seleccionados;
-    nuevosSeleccionados.insert(v);
-    
-    // Crear un nuevo nodo con este conjunto
-    if (nodo.nivel + 1 <= numPuntosAlejados_) {
-      Nodo nuevoNodo(nuevosSeleccionados, nodo.nivel + 1);
-      pila.push(nuevoNodo);
-      nodosGenerados_++; // Incrementar contador de nodos generados
-    }
-  }
+  return suma;
 }
 
 /**
@@ -172,97 +75,159 @@ void RamificacionPoda::generarHijos(const Nodo& nodo, double cotaInferior, stack
  * @return void
  */
 void RamificacionPoda::ejecutar() {
-  auto start = chrono::high_resolution_clock::now();
+  auto start = std::chrono::high_resolution_clock::now();
+  const size_t n = dato_->espacioVectorial.getDimension();
+  const size_t m = numPuntosAlejados_;
   
-  // Inicializar contador de nodos generados y vector de información
-  nodosGenerados_ = 0;
+  // Inicializar contador de nodos
+  nodosGenerados_ = 1; // El nodo raíz
   
-  // Paso 1: Preprocesamiento
-  preprocesamiento();
+  // Realizar precomputaciones
+  calcularPrecomputaciones();
   
-  // Paso 2: Inicialización
+  // Inicializar límite inferior (LB) usando GRASP
+  auto grasp = std::make_unique<Grasp>();
+  grasp->setDato(*dato_);
+  grasp->setNumPuntosAlejados(m);
+  grasp->setMejoresPuntos(2); // Valor por defecto
+  grasp->ejecutar();
   
-  // Generar cota inferior inicial usando el algoritmo proporcionado
-  Dato datoInicial = *dato_;
-  algoritmo_->setDato(datoInicial);
-  algoritmo_->setNumPuntosAlejados(numPuntosAlejados_);
-  algoritmo_->ejecutar();
-
-  // Calculo el valor de la mejor solución inicial
-  if (algoritmo_->getResultados().empty()) {
-    mejorSolucion_ = 0.0;
-    mejorConjunto_.clear();
-  } else {
-    // Obtengo la solución generada por el algoritmo (Voraz o GRASP)
-    const Dato& solucionInicial = algoritmo_->getResultados().back();
-    const EspacioVectorial& espacioSolucion = solucionInicial.espacioVectorial;
-    
-    // Convierto los puntos de la solución inicial a índices en el espacio original
-    mejorConjunto_.clear();
-    for (size_t i = 0; i < espacioSolucion.getDimension(); ++i) {
-      int indiceOriginal = espacioSolucion[i].getIndice() - 1;  // Ajustar a índice base 0
-      mejorConjunto_.insert(indiceOriginal);
+  // Obtener el resultado del GRASP
+  EspacioVectorial espacioGrasp = grasp->getResultados().back().espacioVectorial;
+  std::set<int> seleccionGrasp;
+  for (size_t i = 0; i < espacioGrasp.getDimension(); ++i) {
+    for (size_t j = 0; j < n; ++j) {
+      if (espacioGrasp[i].getIndice() == dato_->espacioVectorial[j].getIndice()) {
+        seleccionGrasp.insert(j);
+        break;
+      }
     }
-    
-    // Calculo la suma de distancias entre todos los pares de puntos seleccionados
-    mejorSolucion_ = calcularSumaDistancias(mejorConjunto_);
   }
   
-  // Inicializar la pila de nodos
-  stack<Nodo> pila;
-  Nodo nodoRaiz(set<int>(), 0);
-  pila.push(nodoRaiz); // Nodo raíz (conjunto vacío, nivel 0)
+  double LB = calcularSumaParejas(seleccionGrasp);
   
-  nodosGenerados_++; // Contar el nodo raíz
+  // Inicializar espacio resultado con el mejor resultado hasta ahora (GRASP)
+  std::set<int> mejorSeleccion = seleccionGrasp;
   
-  // Paso 3: Búsqueda con podas
+  // Pila para nodos, empezar con nodo raíz (Selección vacía, k=0)
+  std::stack<std::pair<std::set<int>, int>> pila;
+  pila.push({std::set<int>(), 0});
+  
   while (!pila.empty()) {
-    // Extraer nodo actual
-    Nodo nodoActual = pila.top();
+    auto nodo = pila.top();
     pila.pop();
     
-    // Si es solución completa
-    if (nodoActual.nivel == numPuntosAlejados_) {
-      double z = calcularSumaDistancias(nodoActual.seleccionados);
-      if (z > mejorSolucion_) {
-        mejorSolucion_ = z;
-        mejorConjunto_ = nodoActual.seleccionados;
+    std::set<int> seleccion = nodo.first;
+    int k = nodo.second;
+    
+    if (k == m) {
+      // Solución completa
+      double z = calcularSumaParejas(seleccion);
+      if (z > LB) {
+        LB = z;
+        mejorSeleccion = seleccion;
       }
-      continue;
+    } else {
+      // Regla de dominancia: podar si hay v no seleccionado con mayor distancia total que algún seleccionado
+      if (!seleccion.empty()) {
+        double minSel = std::numeric_limits<double>::infinity();
+        for (const auto& s : seleccion) {
+          if (distanciasTotal[s] < minSel) {
+            minSel = distanciasTotal[s];
+          }
+        }
+        
+        double maxNoSel = -1.0;
+        for (size_t v = 0; v < n; ++v) {
+          if (seleccion.find(v) == seleccion.end() && distanciasTotal[v] > maxNoSel) {
+            maxNoSel = distanciasTotal[v];
+          }
+        }
+        
+        if (minSel < maxNoSel) {
+          continue; // Podar
+        }
+      }
+      
+      // Calcular cota superior (z1 + UB23)
+      double z1 = calcularSumaParejas(seleccion);
+      std::vector<std::pair<double, int>> zValues;
+      
+      for (size_t v = 0; v < n; ++v) {
+        if (seleccion.find(v) == seleccion.end()) {
+          double zSelV = calcularSumaSelVNoSel(v, seleccion);
+          
+          double sumUnsel = 0.0;
+          int count = 0;
+          for (const auto& u : indicesOrdenados[v]) {
+            if (seleccion.find(u) == seleccion.end() && count < m - k - 1) {
+              sumUnsel += dato_->espacioVectorial[v].calcularDistancia(dato_->espacioVectorial[u]);
+              count++;
+            }
+          }
+          
+          double zUnselV = 0.5 * sumUnsel;
+          double zV = zSelV + zUnselV;
+          zValues.push_back({zV, v});
+        }
+      }
+      
+      std::sort(zValues.begin(), zValues.end(), std::greater<std::pair<double, int>>());
+      
+      double UB23 = 0.0;
+      for (size_t i = 0; i < m - k && i < zValues.size(); ++i) {
+        UB23 += zValues[i].first;
+      }
+      
+      double UB = z1 + UB23;
+      
+      if (UB < LB) {
+        continue; // Podar
+      }
+      
+      // Solución heurística: seleccionar los m-k mejores v por z_v
+      std::vector<int> topVertices;
+      for (size_t i = 0; i < m - k && i < zValues.size(); ++i) {
+        topVertices.push_back(zValues[i].second);
+      }
+      
+      std::set<int> sHeuristic = seleccion;
+      for (const auto& v : topVertices) {
+        sHeuristic.insert(v);
+      }
+      
+      double zHeuristic = calcularSumaParejas(sHeuristic);
+      if (zHeuristic > LB) {
+        LB = zHeuristic;
+        mejorSeleccion = sHeuristic;
+      }
+      
+      // Ramificación: generar nodos hijos
+      for (size_t v = 0; v < n; ++v) {
+        if (seleccion.find(v) == seleccion.end()) {
+          std::set<int> newSel = seleccion;
+          newSel.insert(v);
+          pila.push({newSel, k + 1});
+          nodosGenerados_++; // Incrementar contador de nodos
+        }
+      }
     }
-    
-    // Aplicar regla de dominancia
-    if (aplicarReglaDominancia(nodoActual)) {
-      continue; // Podar este nodo
-    }
-    
-    // Calcular cota superior
-    vector<pair<double, int>> valoresZ;
-    double UB = calcularCotaSuperior(nodoActual, valoresZ);
-    
-    // Poda si la cota no supera la mejor solución
-    if (UB <= mejorSolucion_) {
-      continue;
-    }
-    
-    // Generar hijos
-    generarHijos(nodoActual, mejorSolucion_, pila, valoresZ);
   }
   
-  // Construir el resultado
+  // Construir el resultado final
   Dato resultado = *dato_;
   EspacioVectorial subconjunto;
   
-  // Añadir los puntos de la mejor solución al subconjunto
-  for (int i : mejorConjunto_) {
-    subconjunto.agregarPunto(dato_->espacioVectorial[i]);
+  for (const auto& indice : mejorSeleccion) {
+    subconjunto.agregarPunto(dato_->espacioVectorial[indice]);
   }
   
   resultado.espacioVectorial = subconjunto;
-  auto end = chrono::high_resolution_clock::now();
-  resultado.tiempoCPU = chrono::duration<double>(end - start).count();
+  resultado.nodosGenerados = nodosGenerados_; // Guardar el número de nodos generados
   
-  // Agregar el resultado
+  auto end = std::chrono::high_resolution_clock::now();
+  resultado.tiempoCPU = std::chrono::duration<double>(end - start).count();
+  
   resultados_.push_back(resultado);
 }
 
@@ -275,36 +240,34 @@ void RamificacionPoda::mostrarResultados() {
 
   if (!cabeceraMostrada) {
     // Cabecera
-    cout << "-------------------------------------------------------------------------------------" << endl;
-    cout << left 
-    << setw(20) << "Problema" 
-    << setw(6) << "n" 
-    << setw(6) << "K" 
-    << setw(6) << "m" 
-    << setw(10) << "z"
-    << setw(12) << "Tiempo CPU" 
-    << setw(6) << "S"
-    << setw(6) << " "
-    << setw(6) << "nodos generados"
-    << endl;
-    cout << "-------------------------------------------------------------------------------------" << endl;
+    std::cout << "---------------------------------------------------------------------------------" << std::endl;
+    std::cout << std::left 
+    << std::setw(20) << "Problema" 
+    << std::setw(6) << "n" 
+    << std::setw(6) << "K" 
+    << std::setw(6) << "m" 
+    << std::setw(12) << "z"
+    << std::setw(12) << "Tiempo CPU" 
+    << std::setw(12) << "Nodos" 
+    << std::setw(12) << "S"
+    << std::endl;
+    std::cout << "---------------------------------------------------------------------------------" << std::endl;
     cabeceraMostrada = true;
   }
 
   // Mostrar los resultados
   for (auto& resultado : resultados_) {
     double distancia = calcularDistancia(resultado.espacioVectorial);
-    cout << left 
-    << setw(20) << resultado.nombreFichero
-    << setw(6) << resultado.numPuntos
-    << setw(6) << resultado.tamanio
-    << setw(6) << resultado.espacioVectorial.getDimension()
-    << setw(10) << fixed << setprecision(2) << distancia
-    << setw(12) << fixed << setprecision(5) << resultado.tiempoCPU
-    << setw(0) << resultado.espacioVectorial
-    << setw(6) << " "
-    << setw(12) << nodosGenerados_
-    << endl;
+    std::cout << std::left 
+    << std::setw(20) << resultado.nombreFichero
+    << std::setw(6) << resultado.numPuntos
+    << std::setw(6) << resultado.tamanio
+    << std::setw(6) << resultado.espacioVectorial.getDimension()
+    << std::setw(12) << std::fixed << std::setprecision(2) << distancia
+    << std::setw(12) << std::fixed << std::setprecision(5) << resultado.tiempoCPU
+    << std::setw(12) << resultado.nodosGenerados
+    << std::setw(0) << resultado.espacioVectorial
+    << std::endl;
   }
-  cout << "-------------------------------------------------------------------------------------" << endl;
+  std::cout << "---------------------------------------------------------------------------------" << std::endl;
 }
