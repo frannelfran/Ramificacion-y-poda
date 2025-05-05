@@ -42,7 +42,7 @@ void Voraz::ejecutar() {
     resultado.espacioVectorial.eliminarPunto(*puntoMasAlejado);
 
     // Calculo el nuevo centro de gravedad
-    centroGravedad = resultado.espacioVectorial.calcularCentroGravedad();
+    centroGravedad = subconjunto.calcularCentroGravedad();
 
   } while (subconjunto.getDimension() != numPuntosAlejados_);
   auto end = chrono::high_resolution_clock::now();

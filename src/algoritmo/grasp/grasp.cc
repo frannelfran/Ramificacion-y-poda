@@ -55,7 +55,7 @@ void Grasp::ejecutar() {
     resultado.espacioVectorial.eliminarPunto(*puntoMasAlejado);
 
     // Calculo el nuevo centro de gravedad
-    centroGravedad = resultado.espacioVectorial.calcularCentroGravedad();
+    centroGravedad = subconjunto.calcularCentroGravedad();
 
   } while (subconjunto.getDimension() != numPuntosAlejados_);
 
