@@ -5,7 +5,7 @@
 #ifndef C_RamificacionPoda_H
 #define C_RamificacionPoda_H
 
-#include "../algoritmo.h"
+#include "../voraz/voraz.h"
 #include "../grasp/grasp.h"
 #include <stack>
 #include <queue>
@@ -17,12 +17,12 @@
 
 // Estructura para representar un nodo en el árbol de búsqueda
 struct Nodo {
-  std::set<int> seleccion;        // Puntos seleccionados
+  set<int> seleccion;        // Puntos seleccionados
   double valor;                   // Valor objetivo actual
   double cota;                    // Cota superior
   int nivel;                      // Nivel en el árbol (número de puntos seleccionados)
   
-  Nodo(const std::set<int>& s, double v, double c, int n) 
+  Nodo(const set<int>& s, double v, double c, int n) 
     : seleccion(s), valor(v), cota(c), nivel(n) {}
   
   // Operador para la cola de prioridad (ordenar por cota de mayor a menor)
@@ -43,25 +43,24 @@ class RamificacionPoda : public Algoritmo {
   private:
     // Métodos auxiliares
     void calcularPrecomputaciones();
-    double calcularSumaParejas(const std::set<int>& seleccion) const;
-    double calcularSumaSelVNoSel(int v, const std::set<int>& seleccion) const;
-    double calcularCotaSuperior(const std::set<int>& seleccion, int nivel) const;
+    double calcularSumaParejas(const set<int>& seleccion) const;
+    double calcularSumaSelVNoSel(int v, const set<int>& seleccion) const;
+    double calcularCotaSuperior(const set<int>& seleccion, int nivel) const;
     void establecerCotaInicial();
     
     // Implementaciones de estrategias de poda
-    void ejecutarConPila();
     void ejecutarConPrioridad();
     
     // Atributos para precomputaciones
-    std::vector<double> distanciasTotal;
-    std::vector<std::vector<int>> indicesOrdenados;
+    vector<double> distanciasTotal;
+    vector<vector<int>> indicesOrdenados;
     
     // Contadores para estadísticas
     size_t nodosGenerados_;
     size_t nodosPodados_;
     
     // Mejor solución encontrada
-    std::set<int> mejorSeleccion_;
+    set<int> mejorSeleccion_;
     double mejorValor_;
 };
 

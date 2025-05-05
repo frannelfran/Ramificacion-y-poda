@@ -71,35 +71,34 @@ double RamificacionPoda::calcularSumaSelVNoSel(int v, const set<int>& seleccion)
 }
 
 /**
- * @brief Establece una cota inicial basada en una solución heurística GRASP
+ * @brief Establece una cota inicial basada en una solución heurística algoritmo
  * @return void
  */
 void RamificacionPoda::establecerCotaInicial() {
   const size_t m = numPuntosAlejados_;
   const size_t n = dato_->espacioVectorial.getDimension();
   
-  // Inicializar límite inferior (LB) usando GRASP
-  auto grasp = make_unique<Grasp>();
-  grasp->setDato(*dato_);
-  grasp->setNumPuntosAlejados(m);
-  grasp->setMejoresPuntos(2); // Valor por defecto
-  grasp->ejecutar();
+  // Inicializar límite inferior (LB) usando algoritmo
+  auto algoritmo = make_unique<Grasp>();
+  algoritmo->setDato(*dato_);
+  algoritmo->setNumPuntosAlejados(m);
+  algoritmo->ejecutar();
   
-  // Obtener el resultado del GRASP
-  EspacioVectorial espacioGrasp = grasp->getResultados().back().espacioVectorial;
-  set<int> seleccionGrasp;
+  // Obtener el resultado del algoritmo
+  EspacioVectorial espacioAlgoritmo = algoritmo->getResultados().back().espacioVectorial;
+  set<int> seleccionAlgoritmo;
   
-  for (size_t i = 0; i < espacioGrasp.getDimension(); ++i) {
+  for (size_t i = 0; i < espacioAlgoritmo.getDimension(); ++i) {
     for (size_t j = 0; j < n; ++j) {
-      if (espacioGrasp[i].getIndice() == dato_->espacioVectorial[j].getIndice()) {
-        seleccionGrasp.insert(j);
+      if (espacioAlgoritmo[i].getIndice() == dato_->espacioVectorial[j].getIndice()) {
+        seleccionAlgoritmo.insert(j);
         break;
       }
     }
   }
   
-  mejorValor_ = calcularSumaParejas(seleccionGrasp);
-  mejorSeleccion_ = seleccionGrasp;
+  mejorValor_ = calcularSumaParejas(seleccionAlgoritmo);
+  mejorSeleccion_ = seleccionAlgoritmo;
 }
 
 /**
@@ -157,141 +156,6 @@ double RamificacionPoda::calcularCotaSuperior(const set<int>& seleccion, int niv
 }
 
 /**
- * @brief Implementación del algoritmo con pila (enfoque DFS)
- * @return void
- */
-void RamificacionPoda::ejecutarConPila() {
-  auto start = chrono::high_resolution_clock::now();
-  const size_t n = dato_->espacioVectorial.getDimension();
-  const size_t m = numPuntosAlejados_;
-  
-  // Inicializar contadores
-  nodosGenerados_ = 1; // El nodo raíz
-  nodosPodados_ = 0;
-  
-  // Establecer cota inicial con GRASP
-  establecerCotaInicial();
-  
-  // Pila para nodos, empezar con nodo raíz (Selección vacía, k=0)
-  stack<pair<set<int>, int>> pila;
-  pila.push({set<int>(), 0});
-  
-  while (!pila.empty()) {
-    auto nodo = pila.top();
-    pila.pop();
-    
-    set<int> seleccion = nodo.first;
-    int k = nodo.second;
-    
-    if (k == m) {
-      // Solución completa
-      double z = calcularSumaParejas(seleccion);
-      if (z > mejorValor_) {
-        mejorValor_ = z;
-        mejorSeleccion_ = seleccion;
-      }
-    } else {
-      // Regla de dominancia: podar si hay v no seleccionado con mayor distancia total que algún seleccionado
-      if (!seleccion.empty()) {
-        double minSel = numeric_limits<double>::infinity();
-        for (const auto& s : seleccion) {
-          if (distanciasTotal[s] < minSel) {
-            minSel = distanciasTotal[s];
-          }
-        }
-        
-        double maxNoSel = -1.0;
-        for (size_t v = 0; v < n; ++v) {
-          if (seleccion.find(v) == seleccion.end() && distanciasTotal[v] > maxNoSel) {
-            maxNoSel = distanciasTotal[v];
-          }
-        }
-        
-        if (minSel < maxNoSel) {
-          nodosPodados_++;
-          continue; // Podar
-        }
-      }
-      
-      // Calcular cota superior
-      double UB = calcularCotaSuperior(seleccion, k);
-      
-      if (UB < mejorValor_) {
-        nodosPodados_++;
-        continue; // Podar
-      }
-      
-      // Solución heurística: seleccionar los m-k mejores v por z_v
-      vector<pair<double, int>> zValues;
-      
-      for (size_t v = 0; v < n; ++v) {
-        if (seleccion.find(v) == seleccion.end()) {
-          double zSelV = calcularSumaSelVNoSel(v, seleccion);
-          
-          double sumUnsel = 0.0;
-          int count = 0;
-          for (const auto& u : indicesOrdenados[v]) {
-            if (seleccion.find(u) == seleccion.end() && count < m - k - 1) {
-              sumUnsel += dato_->espacioVectorial[v].calcularDistancia(dato_->espacioVectorial[u]);
-              count++;
-            }
-          }
-          
-          double zUnselV = 0.5 * sumUnsel;
-          double zV = zSelV + zUnselV;
-          zValues.push_back({zV, v});
-        }
-      }
-      
-      sort(zValues.begin(), zValues.end(), greater<pair<double, int>>());
-      
-      // Construir solución heurística
-      vector<int> topVertices;
-      for (size_t i = 0; i < m - k && i < zValues.size(); ++i) {
-        topVertices.push_back(zValues[i].second);
-      }
-      
-      set<int> sHeuristic = seleccion;
-      for (const auto& v : topVertices) {
-        sHeuristic.insert(v);
-      }
-      
-      double zHeuristic = calcularSumaParejas(sHeuristic);
-      if (zHeuristic > mejorValor_) {
-        mejorValor_ = zHeuristic;
-        mejorSeleccion_ = sHeuristic;
-      }
-      
-      // Ramificación: generar nodos hijos
-      for (size_t v = 0; v < n; ++v) {
-        if (seleccion.find(v) == seleccion.end()) {
-          set<int> newSel = seleccion;
-          newSel.insert(v);
-          pila.push({newSel, k + 1});
-          nodosGenerados_++; // Incrementar contador de nodos
-        }
-      }
-    }
-  }
-  
-  // Construir el resultado final
-  Dato resultado = *dato_;
-  EspacioVectorial subconjunto;
-  
-  for (const auto& indice : mejorSeleccion_) {
-    subconjunto.agregarPunto(dato_->espacioVectorial[indice]);
-  }
-  
-  resultado.espacioVectorial = subconjunto;
-  resultado.nodosGenerados = nodosGenerados_; // Guardar el número de nodos generados
-  
-  auto end = chrono::high_resolution_clock::now();
-  resultado.tiempoCPU = chrono::duration<double>(end - start).count();
-  
-  resultados_.push_back(resultado);
-}
-
-/**
  * @brief Implementación del algoritmo con cola de prioridad (enfoque best-first)
  * @return void
  */
@@ -304,7 +168,7 @@ void RamificacionPoda::ejecutarConPrioridad() {
   nodosGenerados_ = 1; // El nodo raíz
   nodosPodados_ = 0;
   
-  // Establecer cota inicial con GRASP
+  // Establecer cota inicial con algoritmo
   establecerCotaInicial();
   
   // Cola de prioridad para nodos, ordenados por cota superior
@@ -387,9 +251,6 @@ void RamificacionPoda::ejecutar() {
   
   // Ejecutar la versión con cola de prioridad (best-first search)
   ejecutarConPrioridad();
-  
-  // Alternativamente, puedes usar la versión con pila (DFS)
-  // ejecutarConPila();
 }
 
 /**
