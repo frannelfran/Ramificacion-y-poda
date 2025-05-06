@@ -23,7 +23,7 @@ class Grasp : public Algoritmo {
   private:
     Punto* puntoMasAlejado(EspacioVectorial& espacio, const Punto& centroGravedad) const;
     // Atributos
-    int mejoresPuntos_ = 5;
+    int mejoresPuntos_ = 2;
 };
 
 #endif

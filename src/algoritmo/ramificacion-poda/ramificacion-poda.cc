@@ -270,7 +270,7 @@ void RamificacionPoda::mostrarResultados() {
     << setw(6) << "m" 
     << setw(12) << "z"
     << setw(12) << "Tiempo CPU" 
-    << setw(12) << "Nodos" 
+    << setw(18) << "Nodos generados" 
     << setw(12) << "S"
     << endl;
     cout << "---------------------------------------------------------------------------------" << endl;
@@ -287,7 +287,7 @@ void RamificacionPoda::mostrarResultados() {
     << setw(6) << resultado.espacioVectorial.getDimension()
     << setw(12) << fixed << setprecision(2) << distancia
     << setw(12) << fixed << setprecision(5) << resultado.tiempoCPU
-    << setw(12) << resultado.nodosGenerados
+    << setw(18) << resultado.nodosGenerados
     << setw(0) << resultado.espacioVectorial
     << endl;
   }
